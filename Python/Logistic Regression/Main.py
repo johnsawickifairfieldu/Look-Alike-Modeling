@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 from sklearn import linear_model
 from sklearn.feature_selection import RFE
@@ -7,8 +9,32 @@ from sklearn.metrics import confusion_matrix
 if __name__ == '__main__':
     print("Running...")
 
-    cat_vars = ['AGECL','HHSEX','EDCL','KIDS','MARRIED','OCCAT1','OCCAT2','RACE','LF']
-    y_name = 'NOCHK'
+    cat_vars = ['AGECL',
+                'HHSEX',
+                'EDCL',
+                'HOUSECL',
+                'KIDS',
+                'MARRIED',
+                'OCCAT1',
+                'OCCAT2',
+                'RACE',
+                'LF',
+                'INDCAT',
+                'EXPENSHILO',
+                'TURNDOWN',
+                'BNKRUPLAST5',
+                'FORECLLAST5',
+                'ASSETCAT',
+                'HBUS',
+                'LEASE',
+                'NVEHIC',
+                'WSAVED', #Y with 3, use with INCOME and KIDS as dependent vars
+                'INCCAT',
+                'NWCAT']
+
+    y_name = 'NOCHK'#'HLIQ','NOCCBAL','HSTOCKS','DCPLANCJ','HBROK','HTRAD','LATE'
+    #really good Ys: 'BSHOPGRDL','ISHOPGRDL','BINTERNET','IINTERNET','INTERNET','YESFINRISK'
+
     all_vars = list(cat_vars)
     all_vars.append(y_name)
 
@@ -31,7 +57,7 @@ if __name__ == '__main__':
 
     log_reg = linear_model.LogisticRegression()
 
-    rfe = RFE(log_reg,12)
+    rfe = RFE(log_reg,5)
     rfe = rfe.fit(df_final[X], df_final[Y].values.ravel())
 
     print(rfe.support_)
@@ -49,7 +75,8 @@ if __name__ == '__main__':
     X_data = df_final[to_keep]
     Y_data = df_final[Y]
 
-    X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X_data, Y_data, test_size=.75, random_state=0)
+    X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X_data, Y_data, test_size=.75,
+                                                                        random_state=int(time.time()))
 
     log_reg.fit(X_train, Y_train.values.ravel())
 
@@ -62,5 +89,8 @@ if __name__ == '__main__':
 
     prob = log_reg.predict_proba(X_test)
 
-    print(Y_pred[60:70])
-    print(prob[60:70, :])
+    print(log_reg.coef_)
+
+    print(X_data.std())
+
+    print(X_data.std().values * log_reg.coef_)
