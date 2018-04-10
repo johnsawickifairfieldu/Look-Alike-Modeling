@@ -28,7 +28,7 @@ if __name__ == '__main__':
                 'HBUS',
                 'LEASE',
                 'NVEHIC',
-                'WSAVED', #Y with 3, use with INCOME and KIDS as dependent vars
+                'WSAVED',
                 'INCCAT',
                 'NWCAT']
 
