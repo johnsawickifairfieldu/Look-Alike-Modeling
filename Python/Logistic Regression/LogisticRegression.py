@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     log_reg = linear_model.LogisticRegression()
 
-    rfe = RFE(log_reg,5)
+    rfe = RFE(log_reg,4)
     rfe = rfe.fit(df_final[X], df_final[Y].values.ravel())
 
     print(rfe.support_)
@@ -91,6 +91,6 @@ if __name__ == '__main__':
 
     print(log_reg.coef_)
 
-    print(X_data.std())
+    print(X_train.std())
 
-    print(X_data.std().values * log_reg.coef_)
+    print(X_train.std().values * log_reg.coef_)
