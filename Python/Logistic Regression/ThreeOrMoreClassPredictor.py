@@ -4,30 +4,39 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from sklearn import linear_model
 
+#2 Xs predicting a Y
 CONST_X1 = 'INCOME'
 CONST_X2 = 'NETWORTH'
 CONST_Y = 'AGECL'
 
+#Load data into dataframe
 df = pd.read_csv('data/berkeleySCF/sub-data.txt', low_memory=False)
 
+#Cleaning the data
 df = df[df[CONST_Y].apply(lambda x: isinstance(x, int) or x.isdigit())]
+#Taking only positive income and networth
 df = df.loc[(df[CONST_X1] > 0) & (df[CONST_X2] > 0)][[CONST_X1, CONST_X2, CONST_Y]]
 
 X = df[[CONST_X1, CONST_X2]].values.astype(np.float64)
+#Compressing the Y classes by half
 Y = np.ceil(df[[CONST_Y]].values.astype(np.int64) / 2).astype(np.int64)
 
+#Taking income and networth on a log10 scale
 X = np.log10(X)
 
+#The model
 log_reg = linear_model.LogisticRegression(C=1e5)
 
 log_reg.fit(X, Y.ravel())
 
+#The rest is graphing
 h_X = .05
 h_Y = .05
 
 x_min, x_max = X[:, 0].min(), X[:, 0].max() + 1
 y_min, y_max = X[:, 1].min(), X[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h_X), np.arange(y_min, y_max, h_Y))
+#Plotting the decision boundaries
 Z = log_reg.predict(np.c_[xx.ravel(), yy.ravel()])
 
 c_map = plt.cm.get_cmap('Paired')
